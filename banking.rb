@@ -45,21 +45,30 @@ class Bank
   end
 
   def deposit(person, amount)
-    if h = @persons_arr.find { |h| h['name'] == person.person_hash["name"]}
-      h['balance'] += amount
-      puts "#{h['name']} deposited #{amount} to #{h['bank']}. #{h['name']} has #{person.person_hash["balance"]-amount}. #{h['name']}'s acccount has #{h['balance']}."
+     if person.person_hash["balance"] < amount
+      puts "#{person.person_hash['name']} does not have enough cash to deposit $#{amount}."
     else
-      puts 'Account not found!'
+      if h = @persons_arr.find { |h| h['name'] == person.person_hash["name"]}
+        h['balance'] += amount
+        puts "#{h['name']} deposited #{amount} to #{h['bank']}. #{h['name']} has #{person.person_hash["balance"]-=amount}. #{h['name']}'s acccount has #{h['balance']}."
+      else
+        puts 'Account not found!'
+      end
     end
+
   end
 
   def withdraw(person, amount)
-    if h = @persons_arr.find { |h| h['name'] == person.person_hash["name"]}
-      h['balance'] -= amount
-      puts "#{h['name']} withdrew #{amount} from #{h['bank']}. #{h['name'] }has #{person.person_hash["balance"]-amount}. #{h['name']}'s acccount has #{h['balance']}."
-    else
-      puts 'Account not found!'
-    end
+      if h = @persons_arr.find { |h| h['name'] == person.person_hash["name"]}
+        if h['balance'] < amount
+          puts "#{person.person_hash['name']} does not have enough money in the account to withdraw $#{amount}."
+        else
+          h['balance'] -= amount
+          puts "#{h['name']} withdrew #{amount} from #{h['bank']}. #{h['name']} has #{person.person_hash["balance"]+=amount}. #{h['name']}'s acccount has #{h['balance']}."
+        end
+      else
+        puts 'Account not found!'
+      end
   end
 
   def transfer(person, bank, amount)
@@ -67,13 +76,21 @@ class Bank
     bank_p = bank.person_acc['bank']
 
     if h = @persons_arr.find { |h| h['name'] == person.person_hash["name"]}
-      puts "#{h['name']} transfered $#{amount} from the #{h['bank']} account to the #{bank_p} account. The #{h['bank']} has $#{h['balance'] - amount} "
+      puts "#{h['name']} transfered $#{amount} from the #{h['bank']} account to the #{bank_p} account. The #{h['bank']} has $#{h['balance'] -= amount} "
       if b = bank.persons_arr.find { |b| b['bank'] == bank.person_acc['bank']}
-        puts "and the bank #{b['bank']} account has  #{b['balance'] + amount} "
+        puts "and the bank #{b['bank']} account has  #{b['balance'] += amount} "
       end
     else
       puts "Account not found"
     end
+  end
+
+  def total_cash_in_bank
+    total = 0
+    @persons_arr.each do |i|
+         total += i['balance']
+    end
+    return "#{@person_acc["bank"]} has $#{total} in the bank."
   end
 end
 
@@ -91,3 +108,10 @@ chase.deposit(friend1, 300)
 chase.withdraw(me, 50)
 chase.transfer(me, wells_fargo, 100)
 
+####Extra Credit level 1: Validate
+chase.deposit(me, 5000)
+chase.withdraw(me, 5000)
+
+####Extra Credit level 2: Count totals
+puts chase.total_cash_in_bank
+puts wells_fargo.total_cash_in_bank
