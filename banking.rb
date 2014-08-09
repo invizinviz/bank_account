@@ -1,37 +1,34 @@
 class Person
-  attr_reader :name, :balance, :person_hash
+  attr_reader :person_status#, :name, :balance
 
   def initialize(name, balance)
-    @name = name
-    @balance = balance
-    @person_hash ={"name" => name,
-                                "balance" => balance}
+    #@name = name
+    #@balance = balance
+    @person_status ={"name" => name, "balance" => balance}
 
-    puts "Hi, #{@person_hash['name']} You have $#{@person_hash['balance']}."
+    puts "Hi, #{@person_status['name']} You have $#{@person_status['balance']}."
   end
 end
 
 class Bank
-  attr_reader :bank_name, :person_acc, :persons_arr
+  attr_reader :bank_name, :bank_account_status, :accounts_status
 
   def initialize(bank_name)
     @bank_name = bank_name
-    @person_acc = Hash.new
-    @persons_arr = Array.new
+    @bank_account_status = Hash.new
+    @accounts_status = Array.new
     puts "#{@bank_name} was just created."
   end
 
   def open_account(person)
-    @person_acc = { "name" => person.person_hash["name"],
-                           "balance" => 0,
-                           "bank" => @bank_name}
-    @persons_arr << @person_acc
-    puts "#{@person_acc["name"]}, thanks for opening an account at #{@person_acc["bank"]}!"
+    @bank_account_status = { "name" => person.person_status["name"], "balance" => 0, "bank" => @bank_name}
+    @accounts_status << @bank_account_status
+    puts "#{@bank_account_status["name"]}, thanks for opening an account at #{@bank_account_status["bank"]}!"
   end
 
   def show_acc(person)
-    n = person.person_hash["name"]
-    if h = @persons_arr.find { |h| h['name'] == n }
+    n = person.person_status["name"]
+    if h = @accounts_status.find { |h| h['name'] == n }
         puts "Hey #{h['name']}, its you balance $#{h['balance']}"
     else
         puts 'Not found!'
@@ -39,18 +36,18 @@ class Bank
   end
 
   def show_all_acc()
-    @persons_arr.each do |i|
+    @accounts_status.each do |i|
       puts i
     end
   end
 
   def deposit(person, amount)
-     if person.person_hash["balance"] < amount
-      puts "#{person.person_hash['name']} does not have enough cash to deposit $#{amount}."
+     if person.person_status["balance"] < amount
+      puts "#{person.person_status['name']} does not have enough cash to deposit $#{amount}."
     else
-      if h = @persons_arr.find { |h| h['name'] == person.person_hash["name"]}
+      if h = @accounts_status.find { |h| h['name'] == person.person_status["name"]}
         h['balance'] += amount
-        puts "#{h['name']} deposited #{amount} to #{h['bank']}. #{h['name']} has #{person.person_hash["balance"]-=amount}. #{h['name']}'s acccount has #{h['balance']}."
+        puts "#{h['name']} deposited #{amount} to #{h['bank']}. #{h['name']} has #{person.person_status["balance"]-=amount}. #{h['name']}'s acccount has #{h['balance']}."
       else
         puts 'Account not found!'
       end
@@ -59,12 +56,12 @@ class Bank
   end
 
   def withdraw(person, amount)
-      if h = @persons_arr.find { |h| h['name'] == person.person_hash["name"]}
+      if h = @accounts_status.find { |h| h['name'] == person.person_status["name"]}
         if h['balance'] < amount
-          puts "#{person.person_hash['name']} does not have enough money in the account to withdraw $#{amount}."
+          puts "#{person.person_status['name']} does not have enough money in the account to withdraw $#{amount}."
         else
           h['balance'] -= amount
-          puts "#{h['name']} withdrew #{amount} from #{h['bank']}. #{h['name']} has #{person.person_hash["balance"]+=amount}. #{h['name']}'s acccount has #{h['balance']}."
+          puts "#{h['name']} withdrew #{amount} from #{h['bank']}. #{h['name']} has #{person.person_status["balance"]+=amount}. #{h['name']}'s acccount has #{h['balance']}."
         end
       else
         puts 'Account not found!'
@@ -72,12 +69,12 @@ class Bank
   end
 
   def transfer(person, bank, amount)
-    name_p = person.person_hash["name"]
-    bank_p = bank.person_acc['bank']
+    name_p = person.person_status["name"]
+    bank_p = bank.bank_account_status['bank']
 
-    if h = @persons_arr.find { |h| h['name'] == person.person_hash["name"]}
+    if h = @accounts_status.find { |h| h['name'] == person.person_status["name"]}
       puts "#{h['name']} transfered $#{amount} from the #{h['bank']} account to the #{bank_p} account. The #{h['bank']} has $#{h['balance'] -= amount} "
-      if b = bank.persons_arr.find { |b| b['bank'] == bank.person_acc['bank']}
+      if b = bank.accounts_status.find { |b| b['bank'] == bank.bank_account_status['bank']}
         puts "and the bank #{b['bank']} account has  #{b['balance'] += amount} "
       end
     else
@@ -87,10 +84,10 @@ class Bank
 
   def total_cash_in_bank
     total = 0
-    @persons_arr.each do |i|
+    @accounts_status.each do |i|
          total += i['balance']
     end
-    return "#{@person_acc["bank"]} has $#{total} in the bank."
+    return "#{@bank_account_status["bank"]} has $#{total} in the bank."
   end
 end
 
